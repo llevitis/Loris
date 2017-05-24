@@ -1,0 +1,31 @@
+table{@}Functional_Activity
+title{@}Functional Activity
+header{@}{@}Functional Activity
+date{@}Date_taken{@}Date of Administration{@}2000{@}2026
+static{@}Candidate_Age{@}Candidate Age (Months)
+static{@}Window_Difference{@}Window Difference (+/- Days)
+select{@}Examiner{@}Examiner{@}NULL=>''
+static{@}total_score{@}Total Score
+header{@}{@}Functional Activity
+header{@}{@}Ask informant to rate patient's ability.
+header{@}{@}Score
+header{@}{@}Writing checks, paying bills, balancing checkbook
+select{@}functional_activity_0{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Assembling tax records, business affairs, or papers
+select{@}functional_activity_1{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Shopping alone for clothes, household necessities, or groceries
+select{@}functional_activity_2{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Playing a game of skill, working on a hobby
+select{@}functional_activity_3{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Heating water, making a cup of coffee, turning off stove after use
+select{@}functional_activity_4{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Preparing a balanced meal
+select{@}functional_activity_5{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Keeping track of current events
+select{@}functional_activity_6{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Paying attention to, understanding, discussing TV, book, magazine
+select{@}functional_activity_7{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Remembering appointments, family occasions, holidays, medications
+select{@}functional_activity_8{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'
+header{@}{@}Traveling out of neighborhood, driving, arranging to take buses
+select{@}functional_activity_9{@}Ability{@}NULL=>''{-}'0'=>'0'{-}'1'=>'1'{-}'2'=>'2'{-}'3'=>'3'

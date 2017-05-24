@@ -1,0 +1,59 @@
+LORIS Installation Script starting at 2017-05-10T15:07:33
+The log for this session will be stored in file /var/www/loris/Loris/tools/logs/install-2017-05-10T15:07:33.log
+---------------------------------------------------------------------
+                   LORIS Installation Script
+---------------------------------------------------------------------
+
+PHP appears to be installed.
+
+PHP Composer appears to be installed.
+
+This install script will ask you to provide inputs for different steps. 
+Please ensure you have the following information ready (if applicable):  
+
+  1) Your project directory name.   
+     (Will be used to modify the paths for Imaging data in the generated
+     config.xml file for LORIS, and may also be used to automatically
+     create/install apache config files.) If unsure, a default like "LORIS"
+     should be acceptable.
+
+Please also consult the Loris WIKI on GitHub for more information on these 
+Install Script input parameters.
+
+Ready to continue? [yn] y
+
+Enter project name: loris_liza
+
+> mkdir -p project/libraries
+Loading composer repositories with package information
+Installing dependencies from lock file
+  - Installing firebase/php-jwt (v3.0.0)
+    Downloading: Connecting...    Downloading: 0%               Downloading: 10%    Downloading: 20%    Downloading: 30%    Downloading: 40%    Downloading: 50%    Downloading: 60%    Downloading: 100%    Downloading: 100%
+
+  - Installing google/recaptcha (1.1.2)
+    Downloading: Connecting...    Downloading: 0%               Downloading: 30%    Downloading: 55%    Downloading: 65%    Downloading: 70%    Downloading: 95%    Downloading: 100%    Downloading: 100%
+
+  - Installing pear-pear.php.net/html_common (1.2.5)
+    Downloading: Connecting...    Downloading: 0%               Downloading: 100%    Downloading: 100%
+  - Installing pear-pear.php.net/html_quickform (3.2.14)
+    Downloading: Connecting...    Downloading: 0%               Downloading: 55%    Downloading: 95%    Downloading: 100%    Downloading: 100%
+  - Installing phpoffice/phpexcel (1.8.1)
+    Downloading: Connecting...    Downloading: 0%               Downloading: 5%    Downloading: 10%    Downloading: 15%    Downloading: 20%    Downloading: 25%    Downloading: 30%    Downloading: 35%    Downloading: 40%    Downloading: 45%    Downloading: 50%    Downloading: 55%    Downloading: 60%    Downloading: 65%    Downloading: 70%    Downloading: 75%    Downloading: 80%    Downloading: 85%    Downloading: 90%    Downloading: 95%    Downloading: 100%    Downloading: 100%
+
+  - Installing smarty/smarty (v3.1.30)
+    Downloading: Connecting...    Downloading: 0%               Downloading: 5%    Downloading: 10%    Downloading: 15%    Downloading: 20%    Downloading: 25%    Downloading: 30%    Downloading: 35%    Downloading: 40%    Downloading: 45%    Downloading: 50%    Downloading: 55%    Downloading: 60%    Downloading: 65%    Downloading: 70%    Downloading: 85%    Downloading: 95%    Downloading: 100%    Downloading: 100%
+
+Generating autoload files
+Ubuntu distribution detected.
+Would you like to automatically create/install apache config files? (Works for Ubuntu 14.04 default Apache installations) [yn] y
+Site 000-default disabled.
+To activate the new configuration, you need to run:
+  service apache2 reload
+Site loris_liza already enabled
+Enabling module rewrite.
+To activate the new configuration, you need to run:
+  service apache2 restart
+Enabling module headers.
+To activate the new configuration, you need to run:
+  service apache2 restart
+Installation complete.

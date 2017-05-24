@@ -1,0 +1,26 @@
+LORIS Installation Script starting at 2017-05-11T16:55:42
+The log for this session will be stored in file /var/www/loris/Loris/tools/logs/install-2017-05-11T16:55:42.log
+---------------------------------------------------------------------
+                   LORIS Installation Script
+---------------------------------------------------------------------
+
+PHP appears to be installed.
+
+PHP Composer appears to be installed.
+
+This install script will ask you to provide inputs for different steps. 
+Please ensure you have the following information ready (if applicable):  
+
+  1) Your project directory name.   
+     (Will be used to modify the paths for Imaging data in the generated
+     config.xml file for LORIS, and may also be used to automatically
+     create/install apache config files.) If unsure, a default like "LORIS"
+     should be acceptable.
+
+Please also consult the Loris WIKI on GitHub for more information on these 
+Install Script input parameters.
+
+Ready to continue? [yn] y
+
+Enter project name: project
+LORIS appears to already be installed. Aborting.
