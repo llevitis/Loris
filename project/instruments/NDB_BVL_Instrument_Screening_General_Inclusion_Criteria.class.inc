@@ -118,6 +118,7 @@ class NDB_BVL_Instrument_Screening_General_Inclusion_Criteria extends NDB_BVL_In
 
     function _page1() {
         $this->addHeader("General Inclusion Criteria");
+
         $yesNoOptions = array(
             null => "",
             "no" => "No",
@@ -125,7 +126,7 @@ class NDB_BVL_Instrument_Screening_General_Inclusion_Criteria extends NDB_BVL_In
         );
 
         $criteriaNames = array(
-            "Weight < 136 kg",
+            "Weight less than 136 kg",
             "At least 6 years of formal education or history of academic achievement and/or employment
             sufficient to exclude mental retardation",
             "Sufficient fluency in English and/or French",
@@ -165,22 +166,24 @@ class NDB_BVL_Instrument_Screening_General_Inclusion_Criteria extends NDB_BVL_In
         for ($i = 0; $i < count($criteriaNames); $i++) {
             $group[] =& $this->createLabel($criteriaNames[$i]);
             $group[] =& $this->createSelect(
-                "inclusion_criteria_" . $i,
+                "inclusion_criteria_" . $i . "_yes_or_no",
                 "yes_or_no",
                 $yesNoOptions
             );
             $this->XINRegisterRule(
-                "inclusion_criteria_" . $i,
-                array("inclusion_criteria_  . $i{@}=={@}"),
-                "A response is required."
+                "inclusion_criteria_" . $i . "_yes_or_no",
+                array("inclusion_criteria_" . $i . "_yes_or_no{@}=={@}"),
+                "A response is required.",
+                "inclusion_criteria_" . $i
             );
             $this->addGroup(
                 $group,
-                "inclusion_criteria_group_$i",
+                "inclusion_criteria_" . $i,
                 null,
                 $this->_GUIDelimiter,
                 false
             );
+            unset($group);
         }
 
 

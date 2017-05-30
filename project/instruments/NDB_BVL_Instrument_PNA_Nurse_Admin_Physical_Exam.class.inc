@@ -135,9 +135,12 @@ class NDB_BVL_Instrument_PNA_Nurse_Admin_Physical_Exam extends NDB_BVL_Instrumen
         );
 
         $this->addLabel("<h4>1</h4>");
+
         $this->addSelect("EKG_done", "Resting EKG done at this visit?", $yesNoOptions);
 
         $this->addLabel("<h4>2</h4>");
+
+
         $symptomNames = array(
             "Drug allergic reaction/hypersensitivity",
             "Sinusitis",
@@ -195,6 +198,12 @@ class NDB_BVL_Instrument_PNA_Nurse_Admin_Physical_Exam extends NDB_BVL_Instrumen
                 "symptom_severity",
                 $symptomOptions
             );
+            $this->XINRegisterRule(
+                "symptom_names_" . $i,
+                array("symptom_names_ . $i{@}=={@}NEVER_REQUIRED"),
+                "Not required.",
+                "symptom_names_group_$i"
+            );
             $this->addGroup(
                 $group,
                 "symptom_names_group_$i",
@@ -210,6 +219,12 @@ class NDB_BVL_Instrument_PNA_Nurse_Admin_Physical_Exam extends NDB_BVL_Instrumen
             $group[] =& $this->createText(
                 "symptom_names_2_" . $i . "_label",
                 "symptom_label"
+            );
+            $this->XINRegisterRule(
+                "symptom_names_2_" . $i . "_label",
+                array("symptom_names_2_" . $i . "_label{@}=={@}NEVER_REQUIRED"),
+                "Not required.",
+                "symptom_names_2_" . $i
             );
             $group[] =& $this->createSelect(
                 "symptom_names_2_" . $i . "_severity",

@@ -1,0 +1,45 @@
+CREATE TABLE `Patient_Personal_Information` (
+`CommentID` varchar(255) NOT NULL default '',
+
+                            `UserID` varchar(255) default NULL,
+
+                            `Examiner` varchar(255) default NULL,
+
+                            `Testdate` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                            `Data_entry_completion_status` enum('Incomplete','Complete') NOT NULL default 'Incomplete',
+`Date_taken` date default NULL,
+`Candidate_Age` varchar(255) default NULL,
+`Window_Difference` varchar(255) default NULL,
+`gender` enum('male','female') default NULL,
+`handedness` enum('left','right') default NULL,
+`years_formal_education` varchar(255) default NULL,
+`years_formal_education_status` enum('not_answered') default NULL,
+`primary_occupation` varchar(255) default NULL,
+`primary_occupation_status` enum('not_answered') default NULL,
+`most_recent_occupation` varchar(255) default NULL,
+`most_recent_occupation_status` enum('not_answered') default NULL,
+`retired_status` enum('yes','no') default NULL,
+`retirement_date` varchar(255) default NULL,
+`retirement_date_status` enum('not_answered') default NULL,
+`type_of_participant_residence` enum('house','condo_co-op_owned','apartment_rented','mobile_home','retirement_community','assisted_living','skilled_nursing_facility','other') default NULL,
+`residence_other` varchar(255) default NULL,
+`primary_language` enum('english','french','spanish','other') default NULL,
+`primary_language_other` varchar(255) default NULL,
+`language_for_testing` varchar(255) default NULL,
+`language_for_testing_status` enum('not_answered') default NULL,
+`year_onset_AD_symptoms` varchar(255) default NULL,
+`year_onset_AD_symptoms_status` enum('not_answered') default NULL,
+`alcohol_consumption_amount` varchar(255) default NULL,
+`alcohol_consumption_frequency` enum('week','month','year') default NULL,
+`smoking_status` enum('yes','no','stopped') default NULL,
+`smoking_stopped_date` varchar(255) default NULL,
+`smoking_stopped_date_status` enum('not_answered') default NULL,
+`ethnic_category` varchar(255) default NULL,
+`ethnic_category_status` enum('not_answered') default NULL,
+`racial_category` enum('american_indian_or_alaskan_native','asian','black_or_african_american','white','native_hawaiian_pacific_islander','arab','unknown','other') default NULL,
+`racial_other` varchar(255) default NULL,
+`racial_other_status` enum('not_answered') default NULL,
+PRIMARY KEY  (`CommentID`)
+
+              );
