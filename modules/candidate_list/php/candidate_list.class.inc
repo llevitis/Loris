@@ -92,9 +92,7 @@ class Candidate_List extends \NDB_Menu_Filter
             //We want just the numeric array of assoc array elements all the time.
             //Legacy is fun.
             if (!isset($consent_details[0])) {
-                $consent_details = array(
-                    $consent_details
-                );
+                $consent_details = array($consent_details);
             }
             foreach ($consent_details as $consentType) {
                 $name  = Database::singleton()->escape($consentType["name"]);
