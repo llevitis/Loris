@@ -362,11 +362,11 @@ class NDB_BVL_Instrument extends NDB_Page
             // a direct data entry page
             $this->addHidden(
                 'candID',
-                isset($_REQUEST["candID"]) ? $_REQUEST['candID'] : ''
+                $this->getCandID()
             );
             $this->addHidden(
                 'sessionID',
-                isset($_REQUEST["sessionID"]) ? $_REQUEST['sessionID'] : ''
+                $this->getSessionID()
             );
         }
         $this->addHidden('commentID', $this->getCommentID());
@@ -1343,6 +1343,26 @@ class NDB_BVL_Instrument extends NDB_Page
             return $fieldValue;
         }
         return false;
+    }
+
+    /**
+     * Gets the candID for the timepoint to which this instrument pertains
+     *
+     * @return Integer the candID
+     */
+
+    function getCandID()
+    {
+        $db =& Database::singleton();
+        $query = "SELECT s.candID FROM session s JOIN flag f ON (s.ID=f.SessionID)  
+                  WHERE f.commentID = :CID";
+        $fieldValue = $db->pselectOne($query, array('CID' => $this->getCommentID()));
+
+        if (!empty($fieldValue)) {
+            return $fieldValue;
+        }
+        return false;
+
     }
 
 
