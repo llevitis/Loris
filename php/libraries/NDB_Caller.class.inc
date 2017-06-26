@@ -443,6 +443,7 @@ class NDB_Caller
         $commentID,
         $redirectToOnSuccess=null
     ) {
+        echo "sup justin";
         $instrument = NDB_BVL_Instrument::factory(
             $instrumentName,
             $commentID,
