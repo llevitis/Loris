@@ -26,11 +26,14 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
     public $hasWritePermission = false;
     public $AjaxModule         = true;
     public $errors = array(
-                      0 => "No MRI parameter form",
-                      1 => "T1 Scan done NOT Partial or Complete in MRI parameter form",
-                      2 => "MRI PF Completed = No T1 Scan, No DICOM logged in Archive but scan is inserted and in browser",
-                      3 => "MRI Parameter Form Incomplete, Tarchive exists, QC pass",
-                     );
+        null => "",
+        0 => "MRI PF Completed = No T1 Scan, No DICOM logged in Archive but scan is inserted and in browser",
+        1 => "MRI Parameter Form Incomplete, Tarchive exists, QC pass"
+    );
+    public $fileType = array (
+                      0 => "t1w",
+                      1 => "t2w"
+    );
     /**
      * Check user permissions
      *
@@ -110,13 +113,24 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
         foreach($patientNames as $pn){
             $namesList[$pn['PatientName']] = $pn['PatientName'];
         }
+
+        $errors = array(
+             null => "",
+             "MRI PF Completed = No T1 Scan, No DICOM logged in Archive but scan is inserted and in browser",
+             "MRI Parameter Form Incomplete, Tarchive exists, QC pass"
+        );
+        $fileType = array (
+        0 => "t1w",
+        1 => "t2w"
+        );
         // Form Elements
         $this->addBasicText('candId', 'DCCID', ["size" => 9, "maxlength" => 7]);
         $this->addBasicText('pSCID', 'PSCID', ["size" => 9, "maxlength" => 7]);
-        $this->addSelect('errorMessage', 'Error Message', $this->errors);
+        $this->addSelect('errorMessage', 'Error Message', $errors);
         $this->addSelect('UploadedBy', 'Uploaded By', $uploaderList);
         $this->addSelect('PatientName', 'Patient ID', $namesList);
         $this->addSelect('site', 'Site', $siteList);
+        $this->addSelect('fileType', 'File Type', $fileType);
         // $this->tpl_data["hasWritePermission"] = $this->hasWritePermission;
         return true;
     }
@@ -167,12 +181,25 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
         * Scan in Browser and QC Status = Pass*/
 
        // print_r($this->errors[3]);
-        $query =  " FROM (
+
+        $errors = array(
+            null => "",
+            "MRI PF Completed = No T1 Scan, No DICOM logged in Archive but scan is inserted and in browser",
+            "MRI Parameter Form Incomplete, Tarchive exists, QC pass"
+        );
+        $fileType = array (
+            null => "",
+            0 => "t1w",
+            1 => "t2w"
+        );
+
+        $query = " FROM (
             SELECT c.PSCID,
                    s.ID as SessionID,  
                    s.CandID as cand_id,
                    s.Visit_label as visit_label,
-                   ('" .$this->errors[2] . "') as error_message, 
+                   ('" . $errors[0] . "') as error_message, 
+                   ('" . $fileType[0] . "') as file_type,
                    f.CommentID as CommentID
             FROM flag f
             LEFT JOIN session s ON (f.SessionID=s.ID)
@@ -189,12 +216,13 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                   AND fi.AcquisitionProtocolID=44
                   AND m.T1_Scan_done IS NULL
                   AND qc.QCStatus = 'Pass'"
-             . " UNION ALL " .
+             . " UNION " .
             "SELECT c.PSCID,
                 s.ID as SessionID,  
                 s.CandID as cand_id,
                 s.Visit_label as visit_label,
-                ('" .$this->errors[3] . "') as error_message, 
+                ('" .$this->errors[1] . "') as error_message, 
+                ('" .$this->fileType[0] . "') as file_type,
                 f.CommentID as CommentID
             FROM flag f 
             LEFT JOIN session s ON (f.SessionID=s.ID)
@@ -214,6 +242,8 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                   AND m.T1_Scan_done = 'No'
                   AND qc.QCStatus = 'Pass') as tmp";
 
+
+
         $this->query = $query;
         //$this->columns = array("m.UploadedBy", "UploadDate", 't.PatientName', 't.CenterName', '("'.$this->errors[1].'") as error_message','(" ") as action',  'f.CommentID as CommentID');
         $this->columns = [
@@ -222,6 +252,7 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                           'cand_id',
                           'visit_label',
                           'error_message',
+                          'file_type',
                           'CommentID',
                          ];
         // $this->group_by = 'c.PSCID, SessionID, cand_id, visit_label, CommentID';
@@ -234,6 +265,7 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                                'DCCID',
                                'Visit Label',
                                'Error Message',
+                               'File Type',
                               ];
 //        $this->validFilters = array(
 //                               'm.UploadedBy',
