@@ -6,7 +6,8 @@
  *
  * @category Module
  * @package  Quality Control
- * @author   Leo Thomas <lthomas.mcin@gmail.com>, Liza Levitis <llevitis.mcin@gmail.com>
+ * @author   Leo Thomas <lthomas.mcin@gmail.com>
+ * @author   Liza Levitis <llevitis.mcin@gmail.com>
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  * @link     https://www.github.com/aces/Loris/
  */
@@ -17,7 +18,8 @@
  *
  * @category Module
  * @package  Quality Control
- * @author   Leo Thomas <lthomas.mcin@gmail.com>, Liza Levitis <llevitis.mcin@gmail.com>
+ * @author   Leo Thomas <lthomas.mcin@gmail.com>
+ * @author   Liza Levitis <llevitis.mcin@gmail.com>
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  * @link     https://www.github.com/aces/Loris/
  */
@@ -26,7 +28,7 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
     public $hasWritePermission = false;
     public $AjaxModule         = true;
 
-    /**quality_control
+    /**
      * Check user permissions
      *
      * @return bool
@@ -39,7 +41,8 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
         return $user->hasPermission('imaging_browser_qc');
     }
     /**
-     * Override default behaviour, since the page is loaded from qualityControlIndex.js
+     * Override default behaviour, since the page is loaded
+     * from qualityControlIndex.js
      *
      * @return void
      * @access public
@@ -94,7 +97,7 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
             "SELECT UploadedBy FROM mri_upload GROUP BY UploadedBy",
             array()
         );
-        foreach($uploaders as $up){
+        foreach ($uploaders as $up) {
             $uploaderList[$up['UploadedBy']] = $up['UploadedBy'];
         }
         $namesList    =[];
@@ -102,11 +105,11 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
             "SELECT PatientName FROM tarchive GROUP BY PatientName",
             array()
         );
-        foreach($patientNames as $pn){
+        foreach ($patientNames as $pn) {
             $namesList[$pn['PatientName']] = $pn['PatientName'];
         }
         $errorList =[];
-        foreach ($this->errors as $error){
+        foreach ($this->errors as $error) {
             $errorList[$error] = $error;
         }
         // Form Elements
@@ -114,15 +117,88 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
         $this->addBasicText('pSCID', 'PSCID', ["size" => 9, "maxlength" => 7]);
         //$this->addSelect('errorMessage', 'Error Message', $errorList);
         $this->addSelect('t1ScanDoneInMRIPF', 'T1 Scan Done', array("Yes"=>"Yes", "No"=>"No"));
-        $this->addSelect('mriParameterForm', "MRI Parameter Form", array("Complete"=>"Complete", "Incomplete"=>"Incomplete"));
-        $this->addSelect('t1QCStatus', 'T1 QC Status', array( "Pass"=>"Pass", "Fail"=>"Fail"));
-        $this->addSelect('scanInImagingBrowser', 'Scan Status', array("Found"=>"Found in Imaging Browser", "Missing"=> "Missing From Imaging Browser"));
+        $this->addSelect('mriParameterForm', "MRI Parameter Form",
+            array("Complete" => "Complete", "Incomplete" => "Incomplete"));
+        $this->addSelect('t1QCStatus', 'T1 QC Status',
+            array( "Pass" => "Pass", "Fail" => "Fail"));
+        $this->addSelect('scanInImagingBrowser', 'Scan Status',
+            array("Found" => "Found in Imaging Browser", "Missing" => "Missing From Imaging Browser"));
         $this->addSelect('uploadedBy', 'Uploaded By', $uploaderList);
         //$this->addSelect('PatientName', 'Patient ID', $namesList);
         $this->addSelect('site', 'Site', $siteList);
         // $this->tpl_data["hasWritePermission"] = $this->hasWritePermission;
         return true;
     }
+
+
+    /**
+     * Create the select statement to be used for the different queries
+     * @param $issue
+     * @return string
+     *
+     */
+    function _getSelectStatement($issue)
+    {
+        $select = "SELECT c.PSCID,
+                   s.ID as SessionID,
+                   s.CandID as cand_id,
+                   s.Visit_label as visit_label,
+                   t.tarchiveID as tarchive_loc,
+                   qc.QCStatus as qc_status,
+                   mu.uploadedBy as uploaded_by,
+                   f.CommentID as CommentID";
+        switch($issue) {
+            case "MRI PF Incomplete":
+                $select .= ", 'Incomplete' as mri_parameter form".
+                ", ' ' as t1_scan_done".
+                ", 'Found' as scan_location";
+                return $select;
+            case "MRI PF Complete, T1 Scan Done = No":
+                $select .= ", 'Complete' as mri_parameter_form".
+                ", 'No' as t1_scan_done".
+                ", 'Found' as scan_location";
+                return $select;
+            case "MRI PF Complete, T1 Scan Done = Yes, Scan Location Missing":
+                $select .= ", 'Complete' as mri_parameter_form".
+                ", 'Yes' as t1_scan_done".
+                ", 'Missing' as scan_location";
+        }
+        return parent::_getSelectStatement($issue);
+    }
+
+
+    /**
+     * Create the where statement to be used for the different queries
+     * @param $issue
+     * @return string
+     */
+    function _getWhereStatement($issue)
+    {
+        $where = "WHERE f.CommentID NOT LIKE 'DDE%'
+                  AND f.Test_name='mri_parameter_form'
+                  AND s.Active='Y'
+                  AND s.CenterID <> '1'";
+        switch($issue) {
+            case "MRI PF Incomplete":
+                $where .= " AND t.ArchiveLocation IS NOT NULL".
+                " AND fi.AcquisitionProtocolID=44".
+                " AND m.T1_Scan_done IS NULL";
+                return $where;
+            case "MRI PF Complete, T1 Scan Done = No":
+                $where .= " AND f.Data_entry='Complete'".
+                " AND fi.AcquisitionProtocolID = 44".
+                " AND (m.T1_Scan_done IS NOT NULL AND m.T1_Scan_done != 'Complete'".
+                " AND m.T1_Scan_done != 'Partial')";
+                return $where;
+            case "MRI PF Complete, Scan Done = Yes, Scan Location Missing":
+                $where .= " AND (m.T1_Scan_done = 'Complete' OR m.T1_Scan_done = 'Partial')".
+                " AND s.ID NOT IN (SELECT SessionID FROM files fi where fi.AcquisitionProtocolID=44)";
+                return $where;
+        }
+        return parent::_getWhereStatement($issue);
+    }
+
+
     /**
      * Build a list of behavioural QC to display in Data Table
      *
@@ -133,6 +209,32 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
     {
 
         $db =& Database::singleton();
+
+        $from = "FROM flag f 
+                 LEFT JOIN session s ON (f.SessionID=s.ID)
+                 LEFT JOIN files fi ON (fi.SessionID = f.SessionID)
+                 LEFT JOIN mri_parameter_form m ON (m.CommentID=f.CommentID)
+                 LEFT JOIN tarchive t ON (t.SessionID=s.ID)
+                 LEFT JOIN candidate c ON (s.CandID=c.CandID)
+                 LEFT JOIN files_qcstatus qc ON (qc.FileID = fi.FileID)
+                 LEFT JOIN mri_upload mu ON (mu.SessionID = f.SessionID)";
+
+     /*   $query = " FROM (
+                  " .$this->_getSelectStatement("MRI PF Incomplete"). "
+                  " .$from. "
+                  " .$this->_getWhereStatement("MRI PF Incomplete"). "
+                  UNION ALL  
+                  " .$this->_getSelectStatement("MRI PF Complete, T1 Scan Done = No"). "
+                  " .$from." 
+                  " .$this->_getWhereStatement("MRI PF Complete, T1 Scan Done = No"). " 
+                  UNION ALL  
+                  " .$this->_getSelectStatement("MRI PF Complete, Scan Done = Yes, Scan Location Missing"). " 
+                  " .$from." 
+                  " .$this->_getWhereStatement("MRI PF Complete, Scan Done = Yes, Scan Location Missing"). "
+                  ) as tmp";
+
+     */
+
 
         // MRI PF incomplete, QC Pass, Tarchive Exists, scan in browser
         $query =  " FROM (
