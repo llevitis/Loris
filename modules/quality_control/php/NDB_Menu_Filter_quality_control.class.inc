@@ -146,22 +146,22 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                    t.tarchiveID as tarchive_loc,
                    qc.QCStatus as qc_status,
                    mu.uploadedBy as uploaded_by,
-                   f.CommentID as CommentID";
+                   f.CommentID as CommentID,\n";
         switch($issue) {
             case "MRI PF Incomplete":
-                $select .= ", 'Incomplete' as mri_parameter form".
-                ", ' ' as t1_scan_done".
-                ", 'Found' as scan_location";
+                $select .= "'Incomplete' as mri_parameter form,\n".
+                "' ' as t1_scan_done,\n".
+                "'Found' as scan_location";
                 return $select;
             case "MRI PF Complete, T1 Scan Done = No":
-                $select .= ", 'Complete' as mri_parameter_form".
-                ", 'No' as t1_scan_done".
-                ", 'Found' as scan_location";
+                $select .= "'Complete' as mri_parameter_form,\n".
+                "'No' as t1_scan_done,\n".
+                "'Found' as scan_location";
                 return $select;
             case "MRI PF Complete, T1 Scan Done = Yes, Scan Location Missing":
-                $select .= ", 'Complete' as mri_parameter_form".
-                ", 'Yes' as t1_scan_done".
-                ", 'Missing' as scan_location";
+                $select .= "'Complete' as mri_parameter_form,\n".
+                "'Yes' as t1_scan_done,\n".
+                "'Missing' as scan_location";
         }
         return parent::_getSelectStatement($issue);
     }
@@ -177,22 +177,22 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
         $where = "WHERE f.CommentID NOT LIKE 'DDE%'
                   AND f.Test_name='mri_parameter_form'
                   AND s.Active='Y'
-                  AND s.CenterID <> '1'";
+                  AND s.CenterID <> '1'\n";
         switch($issue) {
             case "MRI PF Incomplete":
-                $where .= " AND t.ArchiveLocation IS NOT NULL".
-                " AND fi.AcquisitionProtocolID=44".
+                $where .= " AND t.ArchiveLocation IS NOT NULL\n".
+                " AND fi.AcquisitionProtocolID=44\n".
                 " AND m.T1_Scan_done IS NULL";
                 return $where;
             case "MRI PF Complete, T1 Scan Done = No":
-                $where .= " AND f.Data_entry='Complete'".
-                " AND fi.AcquisitionProtocolID = 44".
-                " AND (m.T1_Scan_done IS NOT NULL AND m.T1_Scan_done != 'Complete'".
+                $where .= " AND f.Data_entry='Complete'\n".
+                " AND fi.AcquisitionProtocolID = 44\n".
+                " AND (m.T1_Scan_done IS NOT NULL AND m.T1_Scan_done != 'Complete'\n".
                 " AND m.T1_Scan_done != 'Partial')";
                 return $where;
             case "MRI PF Complete, Scan Done = Yes, Scan Location Missing":
-                $where .= " AND (m.T1_Scan_done = 'Complete' OR m.T1_Scan_done = 'Partial')".
-                " AND s.ID NOT IN (SELECT SessionID FROM files fi where fi.AcquisitionProtocolID=44)";
+                $where .= " AND (m.T1_Scan_done = 'Complete' OR m.T1_Scan_done = 'Partial')\n".
+                " AND s.ID NOT IN (SELECT SessionID FROM files fi where fi.AcquisitionProtocolID=44)\n";
                 return $where;
         }
         return parent::_getWhereStatement($issue);
@@ -219,7 +219,7 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                  LEFT JOIN files_qcstatus qc ON (qc.FileID = fi.FileID)
                  LEFT JOIN mri_upload mu ON (mu.SessionID = f.SessionID)";
 
-     /*   $query = " FROM (
+        $query_1 = " FROM (
                   " .$this->_getSelectStatement("MRI PF Incomplete"). "
                   " .$from. "
                   " .$this->_getWhereStatement("MRI PF Incomplete"). "
@@ -233,9 +233,10 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                   " .$this->_getWhereStatement("MRI PF Complete, Scan Done = Yes, Scan Location Missing"). "
                   ) as tmp";
 
-     */
 
+        print_r($query_1);
 
+        /*
         // MRI PF incomplete, QC Pass, Tarchive Exists, scan in browser
         $query =  " FROM (
                    SELECT c.PSCID,
@@ -264,6 +265,7 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                   AND t.ArchiveLocation IS NOT NULL
                   AND fi.AcquisitionProtocolID=44
                   AND m.T1_Scan_done IS NULL";
+
 
       // MRI PF complete, T1_Scan_done = NO, QC = Pass, Scan in Browser
       $query = $query . " UNION ALL " . "SELECT c.PSCID,
@@ -320,6 +322,8 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                   AND s.CenterID <> '1'
                   AND (m.T1_Scan_done = 'Complete' OR m.T1_Scan_done = 'Partial')
                   AND s.ID NOT IN (SELECT SessionID FROM files fi where fi.AcquisitionProtocolID=44)) as tmp";
+
+        */
 
         $this->query = $query;
         $this->columns = [
