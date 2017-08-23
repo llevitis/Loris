@@ -219,7 +219,7 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                  LEFT JOIN files_qcstatus qc ON (qc.FileID = fi.FileID)
                  LEFT JOIN mri_upload mu ON (mu.SessionID = f.SessionID)";
 
-        $query_1 = " FROM (
+    /*    $query_1 = " FROM (
                   " .$this->_getSelectStatement("MRI PF Incomplete"). "
                   " .$from. "
                   " .$this->_getWhereStatement("MRI PF Incomplete"). "
@@ -233,10 +233,9 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                   " .$this->_getWhereStatement("MRI PF Complete, Scan Done = Yes, Scan Location Missing"). "
                   ) as tmp";
 
+*/
 
-        print_r($query_1);
 
-        /*
         // MRI PF incomplete, QC Pass, Tarchive Exists, scan in browser
         $query =  " FROM (
                    SELECT c.PSCID,
@@ -323,7 +322,7 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                   AND (m.T1_Scan_done = 'Complete' OR m.T1_Scan_done = 'Partial')
                   AND s.ID NOT IN (SELECT SessionID FROM files fi where fi.AcquisitionProtocolID=44)) as tmp";
 
-        */
+
 
         $this->query = $query;
         $this->columns = [
