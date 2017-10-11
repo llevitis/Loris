@@ -120,6 +120,8 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                    (SELECT name FROM psc WHERE CenterID=s.CenterID) as site,
                    s.Visit_label as visit_label,
                    '".$scan_type."' as scan_type,
+                   (SELECT Name FROM Project WHERE ProjectID=c.ProjectID) as project,  
+                   (SELECT title FROM subproject WHERE SubprojectID=s.SubprojectID) as subproject,
                    CASE
                       WHEN m.".$scan_done." IS NULL THEN 'Incomplete'
                       ELSE 'Complete'
@@ -199,6 +201,12 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                 }
             }
         }
+        $config = NDB_Config::singleton();
+        if ($config->getSetting("useProjects")==="true") {
+            $projectList = Utility::getProjectList();
+            $subprojectList = Utility::getSubprojectList();
+        }
+
 
         $scan_types = $this->_getScanTypes();
 
@@ -220,6 +228,8 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
         $this->addSelect('site', 'Site', $siteList);
         $this->addBasicText('candId', 'DCCID', ["size" => 9, "maxlength" => 7]);
         $this->addBasicText('pSCID', 'PSCID', ["size" => 9, "maxlength" => 7]);
+        $this->addSelect('project', 'Project', $projectList);
+        $this->addSelect('subproject', 'Subproject', $subprojectList);
         $this->addSelect('scanType', 'Scan Type', $scan_types);
         $this->addSelect('mRIParameterForm', "MRI Parameter Form", array("Complete" => "Complete", "Incomplete" => "Incomplete"));
         $this->addSelect('scanDoneInMRIPF', 'Scan Done in MRI PF', array("Yes" => "Yes", "No" => "No"));
@@ -267,6 +277,8 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                           'SessionID',
                           'cand_id',
                           'site',
+                          'project',
+                          'subproject',
                           'visit_label',
                           'scan_type',
                           'mri_parameter_form',
@@ -284,6 +296,8 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
             SessionID,
             cand_id,
             site,
+            project, 
+            subproject,
             visit_label,
             scan_type,
             mri_parameter_form,
@@ -303,6 +317,8 @@ class NDB_Menu_Filter_Quality_Control extends NDB_Menu_Filter
                           'Session ID',
                           'DCCID',
                           'Site',
+                          'Project',
+                          'Subproject',
                           'Visit Label',
                           'Scan Type',
                           'MRI Parameter Form',

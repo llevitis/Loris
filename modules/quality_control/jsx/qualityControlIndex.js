@@ -12,17 +12,17 @@ class QualityControlIndex extends React.Component {
         super(props);
         this.state = {
             isLoadedImg: false,
-            isLoadedBehavioral: false,
+          //  isLoadedBehavioral: false,
             imgFilter: {},
-            behavioralFilter: {},
+           // behavioralFilter: {},
         };
         this.fetchData = this.fetchData.bind(this);
-        this.updateBehavioralFilter = this.updateBehavioralFilter.bind(this);
+     //   this.updateBehavioralFilter = this.updateBehavioralFilter.bind(this);
         this.updateImgFilter= this.updateImgFilter.bind(this);
     }
     componentDidMount(){
         this.fetchData("imaging");
-        this.fetchData("behavioral")
+     //   this.fetchData("behavioral")
     }
     fetchData(flag){
         if (flag == "imaging"){
@@ -37,7 +37,7 @@ class QualityControlIndex extends React.Component {
                     console.log("Got Imaging Data");;
                 }.bind(this),
             });
-        }else if (flag == "behavioral"){
+        } /*else if (flag == "behavioral"){
             $.ajax(this.props.BehavioralDataURL, {
                 method:"GET",
                 dataType: "json",
@@ -49,7 +49,7 @@ class QualityControlIndex extends React.Component {
                     });
                 }.bind(this),
             });
-        }
+        } */
     }
     updateImgFilter(filter) {
         this.setState({
@@ -57,14 +57,14 @@ class QualityControlIndex extends React.Component {
             filter: filter
         });
     }
-    updateBehavioralFilter(filter){
+    /*updateBehavioralFilter(filter){
         this.setState({
             behavioralFilter: filter,
             filter: filter
         });
-    }
+    }*/
     render() {
-        if (!this.state.isLoadedBehavioral || !this.state.isLoadedImg){
+        if (!this.state.isLoadedImg){
             return(
                 <button className="btn-info has-spinner">
                     Loading
@@ -75,11 +75,11 @@ class QualityControlIndex extends React.Component {
             );
         }
         let tabList = [
-            {id: "behavioral", label: "Behavioral"},
+          //  {id: "behavioral", label: "Behavioral"},
             {id: "imaging", label:"Imaging"}
         ];
 
-        let tab0 = (
+     /*   let tab0 = (
             <TabPane TabId={tabList[0].id}>
                 <FilterForm
                     Module="quality_control"
@@ -98,10 +98,10 @@ class QualityControlIndex extends React.Component {
                     Filter={this.state.filter}
                 />
             </TabPane>
-        );
+        ); */
 
-        let tab1 = (
-            <TabPane TabId={tabList[1].id} >
+        let tab0 = (
+            <TabPane TabId={tabList[0].id} >
                 <FilterForm
                     Module="quality_control"
                     name="quality_control"
@@ -126,7 +126,6 @@ class QualityControlIndex extends React.Component {
                 <Tabs id = "TabPanes" tabs={tabList} defaultTab={tabList[0].id}
                       updateURL={true}>
                     {tab0}
-                    {tab1}
                 </Tabs>
             </div>
         );
@@ -136,8 +135,7 @@ $(function() {
     const qualityControlIndex = (
         <div className="page-qualityControl">
             <QualityControlIndex
-                ImgDataURL={`${loris.BaseURL}/quality_control/?format=json`}
-                BehavioralDataURL = {`${loris.BaseURL}/quality_control/?submenu=quality_control_behavioral&format=json`}/>
+                ImgDataURL={`${loris.BaseURL}/quality_control/?format=json`}/>
         </div>
     );
     ReactDOM.render(qualityControlIndex, document.getElementById("lorisworkspace"));
