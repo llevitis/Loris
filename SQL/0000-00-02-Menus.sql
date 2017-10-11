@@ -55,8 +55,7 @@ INSERT INTO LorisMenu (Label, Link, Parent, OrderNumber) VALUES
     ('Conflict Resolver', 'conflict_resolver/', (SELECT ID FROM LorisMenu as L WHERE Label='Clinical'), 2),
     ('Examiner', 'examiner/', (SELECT ID FROM LorisMenu as L WHERE Label='Clinical'), 3),
     ('Training', 'training/', (SELECT ID FROM LorisMenu as L WHERE Label='Clinical'), 4),
-    ('Media', 'media/', (SELECT ID FROM LorisMenu as L WHERE Label='Clinical'), 5),
-    ('Quality Control', 'quality_control/', (SELECT ID FROM LorisMenu as L WHERE Label='Clinical'), 6);
+    ('Media', 'media/', (SELECT ID FROM LorisMenu as L WHERE Label='Clinical'), 5);
 
 
 INSERT INTO LorisMenu (Label, Link, Parent, OrderNumber) VALUES
@@ -81,7 +80,8 @@ INSERT INTO LorisMenu (Label, Link, Parent, OrderNumber) VALUES
     ('Genomic Browser', 'genomic_browser/', (SELECT ID FROM LorisMenu as L WHERE Label='Tools'), 6),
     ('Data Release', 'data_release/', (SELECT ID FROM LorisMenu as L WHERE Label='Tools'), 7),
     ('Acknowledgements', 'acknowledgements/', (SELECT ID FROM LorisMenu as L WHERE Label='Tools'), 8),
-    ('Issue Tracker', 'issue_tracker/', (SELECT ID FROM LorisMenu as L WHERE Label='Tools'), 9);
+    ('Issue Tracker', 'issue_tracker/', (SELECT ID FROM LorisMenu as L WHERE Label='Tools'), 9),
+    ('Imaging QC', 'quality_control/', (SELECT ID FROM LorisMenu as L WHERE Label='Tools'), 10);
 
 
 INSERT INTO LorisMenu (Label, Link, Parent, OrderNumber) VALUES
