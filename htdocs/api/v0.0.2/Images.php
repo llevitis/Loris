@@ -35,9 +35,7 @@ class Images extends APIBase
      */
     public function __construct($method, $data=null)
     {
-        $this->AllowedMethods = array(
-            'GET',
-        );
+        $this->AllowedMethods = array('GET');
 
         $this->RequestData['since'] = $data['since'] ?? '1970-01-01 00:00:01';
 
@@ -92,15 +90,16 @@ class Images extends APIBase
             array('v_time' => strtotime($this->RequestData['since']) ?? 0)
         );
 
-        $images = array_map(function($item) {
-            $candid    = $item['CandID'];
-            $session   = $item['Visit_label'];
-            $file_name = basename($item['File']);
-            $link = "/candidates/$candid/$session/images/$file_name";
-            return array(
-                'link' => $link,
-            );
-        }, $result);
+        $images = array_map(
+            function ($item) {
+                $candid    = $item['CandID'];
+                $session   = $item['Visit_label'];
+                $file_name = basename($item['File']);
+                $link      = "/candidates/$candid/$session/images/$file_name";
+                return array('link' => $link);
+            },
+            $result
+        );
 
         $this->JSON = ["Images" => $images];
     }
