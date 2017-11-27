@@ -59,6 +59,7 @@ class Candidate_List extends \NDB_Menu_Filter
     {
         $user   =& \User::singleton();
         $config =& \NDB_Config::singleton();
+        $db =& \Database::singleton();
 
         $this->tpl_data['toggled_visible'] =false;
 
@@ -96,8 +97,8 @@ class Candidate_List extends \NDB_Menu_Filter
             }
 
             $consentType = $consent_details[0];
-            $name  = Database::singleton()->escape($consentType["name"]);
-            $label = Database::singleton()->escape($consentType["label"]);
+            $name        = $db->escape($consentType["name"]);
+            $label       = $db->escape($consentType["label"]);
             //This is not foolproof.
             //This is only done because the following does not work,
             //"ps.{$name} AS `{$label}`" (notice the backticks `)
