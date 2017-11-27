@@ -93,7 +93,7 @@ class Candidate_List extends \NDB_Menu_Filter
             //We want just the numeric array of assoc array elements all the time.
 
             if (!isset($consent_details[0])) {
-                $consent_details = Utility::toArray($consent_details);
+                $consent_details = \Utility::toArray($consent_details);
             }
 
             $consentType = $consent_details[0];
