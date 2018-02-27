@@ -10,7 +10,6 @@
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  * @link     https://www.github.com/aces/Loris-Trunk/
  */
-
 /**
  * User class. This deals with any User management except permissions,
  * which is contained in the UserPermissions base class.
@@ -30,7 +29,6 @@ class User extends UserPermissions
      * @access private
      */
     var $userInfo = array();
-
     /**
      * Constructor
      *
@@ -44,16 +42,12 @@ class User extends UserPermissions
     static function &factory($username)
     {
         $obj = new User;
-
         // right off, set the username
         $obj->userInfo['UserID'] = $username;
-
         // get the user's permissions
-        $success = $obj->select($username);
-
+        $obj->select($username);
         // create DB object
         $DB =& Database::singleton();
-
         // get user data from database
         $query = "SELECT users.*,
             GROUP_CONCAT(psc.Name ORDER BY psc.Name SEPARATOR ';') AS Sites
@@ -62,9 +56,7 @@ class User extends UserPermissions
             LEFT JOIN psc ON (user_psc_rel.CenterID=psc.CenterID)
             WHERE users.UserID = :UID
             GROUP BY users.ID";
-
         $row = $DB->pselectRow($query, array('UID' => $username));
-
         // get user sites
         $user_centerID_query =  $DB->pselect(
             "SELECT CenterID FROM user_psc_rel upr
@@ -75,7 +67,6 @@ class User extends UserPermissions
         foreach ($user_centerID_query as $key=>$val) {
             $user_cid[$key] =$val['CenterID'];
         }
-
         // Get examiner information
         $examiner_check = $DB->pselect(
             "SELECT e.full_name,
@@ -90,20 +81,19 @@ class User extends UserPermissions
                           OR (epr.active='N' AND epr.pending_approval='Y')
                         )",
             array(
-             "fn" => $row['Real_name'],
+                "fn" => $row['Real_name'],
             )
         );
-
         $examiner_info =array();
         if (!empty($examiner_check) && !is_null($examiner_check)) {
-            foreach ($examiner_check as $rw=>$val) {
+            foreach ($examiner_check as $val) {
                 if ($val['active'] == 'Y') {
                     $examiner_info['pending'] = $val['pending_approval'];
                 }
                 $examiner_info[$val['centerID']] =array(
-                                                   $val['active'],
-                                                   $val['radiologist'],
-                                                  );
+                    $val['active'],
+                    $val['radiologist'],
+                );
             }
         }
         // store user data in object property
@@ -112,8 +102,6 @@ class User extends UserPermissions
         $obj->userInfo    = $row;
         return $obj;
     }
-
-
     /**
      * Singleton method. Retrieve the user passed as parameter, but only
      * 1 instance.
@@ -132,8 +120,6 @@ class User extends UserPermissions
         }
         return $instance;
     }
-
-
     /**
      * Inserts a user
      *
@@ -147,13 +133,9 @@ class User extends UserPermissions
     {
         // create DB object
         $DB =& Database::singleton();
-
-        $success = $DB->insert('users', $set);
-
+        $DB->insert('users', $set);
         return true;
     }
-
-
     /**
      * Updates a user
      *
@@ -166,16 +148,13 @@ class User extends UserPermissions
     {
         // create DB object
         $DB =& Database::singleton();
-
-        $success = $DB->update(
+        $DB->update(
             'users',
             $set,
             array('UserID' => $this->userInfo['UserID'])
         );
-
         return true;
     }
-
     /**
      * Gets user data
      *
@@ -205,7 +184,6 @@ class User extends UserPermissions
             return $this->userInfo[$var];
         }
     }
-
     /**
      * Get users real name
      *
@@ -215,7 +193,6 @@ class User extends UserPermissions
     {
         return $this->userInfo['Real_name'];
     }
-
     /**
      * Get the user's id
      *
@@ -225,7 +202,6 @@ class User extends UserPermissions
     {
         return $this->userInfo['ID'];
     }
-
     /**
      * Get the user's username
      *
@@ -235,7 +211,6 @@ class User extends UserPermissions
     {
         return $this->userInfo['UserID'];
     }
-
     /**
      * Get the user's sites' name
      *
@@ -249,7 +224,6 @@ class User extends UserPermissions
                                    with getSiteNames"
         );
     }
-
     /**
      * Get the user's sites' names, concatenated with
      * a semi-colon if the User is at more than one site
@@ -260,7 +234,6 @@ class User extends UserPermissions
     {
         return $this->userInfo['Sites'];
     }
-
     /**
      * Get the user's site's ID number
      *
@@ -274,7 +247,6 @@ class User extends UserPermissions
                                    with getCenterIDs"
         );
     }
-
     /**
      * Get the user's sites' ID numbers
      *
@@ -284,7 +256,6 @@ class User extends UserPermissions
     {
         return $this->userInfo['CenterIDs'];
     }
-
     /**
      * Get the user's language preference
      *
@@ -294,8 +265,6 @@ class User extends UserPermissions
     {
         return $this->userInfo['language_preference'];
     }
-
-
     /**
      * Returns all sites where Examiner is active
      *
@@ -308,7 +277,6 @@ class User extends UserPermissions
         natcasesort($site_list);
         return $site_list;
     }
-
     /**
      * Returns all user's sites that are StudySites
      *
@@ -327,7 +295,6 @@ class User extends UserPermissions
         natcasesort($user_study_sites);
         return $user_study_sites;
     }
-
     /**
      * Checks if the user is in at least one study site
      *
@@ -336,7 +303,7 @@ class User extends UserPermissions
     function hasStudySite()
     {
         $site_arr = $this->getCenterIDs();
-        foreach ($site_arr as $key => $sitename) {
+        foreach ($site_arr as $sitename) {
             $site = Site::singleton($sitename);
             if ($site->isStudySite()) {
                 return true;
@@ -344,7 +311,6 @@ class User extends UserPermissions
         }
         return false;
     }
-
     /**
      * Checks that the user's email is valid
      *
@@ -358,7 +324,6 @@ class User extends UserPermissions
         };
         return true;
     }
-
     /**
      * Generates a random alphanumeric password
      *
@@ -368,25 +333,20 @@ class User extends UserPermissions
      * @access public
      * @static
      */
-    function newPassword($length = 8)
+    static function newPassword($length = 8)
     {
         // start with a blank password
         $password = '';
-
         $numbers      = '0123456789';
         $specialChars = '!@#$%^*()';
         // & not part of $specialChars since it causes URL to break
-
         $possible = $numbers . $specialChars . 'abcdefghijklmnopqrstuvwxyz';
-
         // length of possible characters minus one
         $possible_cnt = strlen($possible) - 1;
-
         // add random characters to $password until $length is reached
         for ($i = 0; $i < $length-2; $i++) {
             $password .= substr($possible, random_int(0, $possible_cnt), 1);
         }
-
         if (strpbrk($password, $specialChars) === false) {
             $password .= substr(
                 $specialChars,
@@ -394,7 +354,6 @@ class User extends UserPermissions
                 1
             );
         }
-
         if (strpbrk($password, $numbers) === false) {
             $password .= substr(
                 $numbers,
@@ -402,15 +361,11 @@ class User extends UserPermissions
                 1
             );
         }
-
         for ($i = strlen($password); $i < $length; $i++) {
             $password .= substr($possible, mt_rand(0, $possible_cnt), 1);
         }
-
         return $password;
     }
-
-
     /**
      * Check password strength
      *
@@ -436,17 +391,14 @@ class User extends UserPermissions
         if (strlen($password) < 8) {
             return false;
         }
-
         // nothing but letters
         if (!preg_match('/[^A-Za-z]/', $password)) {
             return false;
         }
-
         // nothing but numbers
         if (!preg_match('/[^0-9]/', $password)) {
             return false;
         }
-
         // preg_match returns 1 on match, 0 on non-match
         $CharTypes += preg_match('/[0-9]+/', $password);
         $CharTypes += preg_match('/[A-Za-z]+/', $password);
@@ -454,7 +406,6 @@ class User extends UserPermissions
         if ($CharTypes < 3) {
             return false;
         }
-
         // compare password to values
         foreach ($values as $key => $value) {
             $function = create_function(
@@ -466,7 +417,6 @@ class User extends UserPermissions
                 return false;
             }
         }
-
         return true;
     }
     /**
@@ -479,7 +429,6 @@ class User extends UserPermissions
         //DCC site = 1 by LORIS convention
         return ($this->userInfo['CenterID']== 1);
     }
-
     /**
      * Updates the password for this user into the appropriate field in the
      * database.
@@ -498,17 +447,13 @@ class User extends UserPermissions
                 mktime(0, 0, 0, date('n') + 6, date('j'), date('Y'))
             );
         }
-
         $updateArray = array('Password_expiry' => $expiry);
-
         $updateArray['Password_hash'] = password_hash(
             $password,
             PASSWORD_DEFAULT
         );
-
         $this->update($updateArray);
     }
-
     /**
      * Determines if the user has a center
      *

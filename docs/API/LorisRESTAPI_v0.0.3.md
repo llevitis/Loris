@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Loris API - v0.0.3
+=======
+# Loris API - v0.0.3-dev
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ## 1.0 Overview
 
@@ -9,7 +13,11 @@ or no data. The Loris API uses standard HTTP error codes and the body of any res
 either be empty or contain only a JSON object for any request.
 
 For brevity, the `$LorisRoot/api/$APIVERSION` is omitted from the definitions in this
+<<<<<<< HEAD
 document. This document specifies $APIVERSION v0.0.3 and it
+=======
+document. This document specifies $APIVERSION v0.0.3-dev and it
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 MUST be included before the request in all requests.
 
 HTTP GET requests NEVER modify data. PUT, POST or PATCH requests MUST be used to modify
@@ -39,7 +47,11 @@ so that standard Loris modules can simply use the API.
 If a user is not logged in to Loris (for instance, in a third party app or a CORS application),
 they can be be authenticated using [JSON Web Tokens](https://jwt.io).
 
+<<<<<<< HEAD
 The client should POST a request to /login with a payload of the form
+=======
+The client should POST a request to /login with a payload of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -49,7 +61,11 @@ The client should POST a request to /login with a payload of the form
 ```
 
 If the username and password are valid, the API will respond with a 200 OK and payload
+<<<<<<< HEAD
 of the form
+=======
+of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -119,6 +135,11 @@ by the 3 letter site alias before attempting to pass this regex to a regular exp
 or it will result in false negatives.
 
 
+<<<<<<< HEAD
+=======
+## 2.1 Single project 
+
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 ```
 GET /projects/$ProjectName
 ```
@@ -139,11 +160,46 @@ The body of the request to /projects/$ProjectName will be an entity of the form:
 }
 ```
 
+<<<<<<< HEAD
+=======
+### 2.1.1 Single project images  
+```
+GET /projects/$ProjectName/images/
+```
+
+Will return a JSON object of the form:
+
+```js
+{
+  "Images" : [
+    {
+      "Candidate": "123456",
+      "Visit": "V1",
+      "ScanType": "t2", /* Acquisition protocol */
+      "Link": "\/candidates\/300022\/V1\/images\/loris-MRI_123456_V1_t2_001.mnc", /* URL relative to this API */
+      "InsertTime": "2016-08-09T14:15:30-05:00" /* The inserted date ISO 8601 */
+    },
+    ...
+  ]
+}
+```
+It is possible to provide a GET parameter named `since` where the value need to be a date or datetime.
+```
+ex: 2016-08-09 or 2016-08-09 10:00:00 or 2016-08-09T10:00:00-05:00
+```
+The format must follow php Supported Date and Time Formats for Datetime objects. See http://php.net/manual/en/datetime.formats.php  
+
+### 2.1.2 Single project instruments  
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 ```
 GET /projects/$ProjectName/instruments/
 ```
 
+<<<<<<< HEAD
 Will return a JSON object of the form
+=======
+Will return a JSON object of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -168,11 +224,19 @@ Will return a JSON object of the form
 
 Where the InstrumentNames are the "Short Name" of all the instruments used/installed in this project.
 
+<<<<<<< HEAD
+=======
+### 2.1.3 Single project visits  
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 ```
 GET /projects/$ProjectName/visits/
 ```
 
+<<<<<<< HEAD
 Will return a JSON object of the form
+=======
+Will return a JSON object of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -185,11 +249,19 @@ Will return a JSON object of the form
 
 Where V1, V2, ... are the visits that may exist for this project
 
+<<<<<<< HEAD
+=======
+### 2.1.3 Single project candidates  
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 ```
 GET /projects/$ProjectName/candidates/
 ```
 
+<<<<<<< HEAD
 will return a JSON object of the form
+=======
+will return a JSON object of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -224,7 +296,11 @@ Methods for getting/putting data into specific candidates are specified in secti
 
 The /candidate portion of the API is used for retrieving and modifying candidate data and
 data attached to a specific candidate or visit such as visits or instrument data. Portions
+<<<<<<< HEAD
 of this reference a CandidateObject. A CandidateObject is a JSON object of the form
+=======
+of this reference a CandidateObject. A CandidateObject is a JSON object of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -244,7 +320,11 @@ representing a candidate in Loris.
 GET /candidates/
 ```
 
+<<<<<<< HEAD
 will return a JSON object of the form
+=======
+will return a JSON object of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -296,7 +376,11 @@ GET /candidates/$CandID
 
 A JSON object representing that candidate will be returned.
 
+<<<<<<< HEAD
 The JSON object is of the form
+=======
+The JSON object is of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -317,7 +401,11 @@ true of all of the API hierarchy under /candidates/$CandID.
 
 ### 3.2 Getting Candidate visit data
 
+<<<<<<< HEAD
 A GET request of the form
+=======
+A GET request of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```
 GET /candidates/$CandID/$VisitLabel
@@ -368,7 +456,11 @@ Loris, or Approval has not occured)
 GET /candidates/$CandID/$VisitLabel/instruments
 ```
 
+<<<<<<< HEAD
 Will return a JSON object of the form.
+=======
+Will return a JSON object of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -500,7 +592,11 @@ PUT /candidates/$CandID/$Visit/qc/imaging
 
 To retrieve the session level imaging QC data for a visit, a request can
 be made `/candidates/$CandID/$Visit/qc/imaging`. It will return a JSON object
+<<<<<<< HEAD
 of the form
+=======
+of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {
@@ -532,7 +628,11 @@ GET /candidates/$CandID/$VisitLabel/images/$Filename/qc
 PUT /candidates/$CandID/$VisitLabel/images/$Filename/qc
 ```
 
+<<<<<<< HEAD
 Returns file level QC information. It will return a JSON object of the form
+=======
+Returns file level QC information. It will return a JSON object of the form:
+>>>>>>> af6b47f35cbbc14db0dd390f4f44ba29b1b85347
 
 ```js
 {

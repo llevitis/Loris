@@ -11,7 +11,6 @@
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  * @link     https://www.github.com/aces/Loris/
  */
-
 /**
  * SinglePointLogin class
  *
@@ -31,87 +30,18 @@ class SinglePointLogin
      * Defines whether a user is currently logged in
      */
     var $_isLoggedIn = false;
-
     /**
      * Internally held copy of username
      */
     var $_username = null;
-
     /**
      * To carry the error messages
      */
     var $_lastError = null;
-
     /**
      * Defines whether a user's password has expired
      */
     var $_passwordExpired = false;
-
-    /**
-     * Dumps the login form
-     *
-     * @return void
-     * @access public
-     */
-    function showLoginScreen()
-    {
-        $tpl_data = array();
-        if (isset($_POST['username'])) {
-            $tpl_data['username'] = $_POST['username'];
-        } else {
-            $tpl_data['username'] = '';
-        }
-
-        $tpl_data['currentyear'] = date('Y');
-        $tpl_data['version']     = file_get_contents(__DIR__ . "/../../VERSION");
-
-        // remove logout from request
-        if (isset($_SERVER['QUERY_STRING'])) {
-            parse_str($_SERVER['QUERY_STRING'], $params);
-            unset($params['logout']);
-        } else {
-            $params = array();
-        }
-
-        $config =& NDB_Config::singleton();
-
-        $tpl_data['page_title']    = $config->getSetting('title');
-        $tpl_data['css']           = $config->getSetting('css');
-        $tpl_data['action']        = $_SERVER['PHP_SELF']
-            . '?' . http_build_query($params);
-        $tpl_data['error_message'] = $this->_lastError;
-
-        $study_links = $config->getExternalLinks('Studylinks');
-        foreach ($study_links as $label => $url) {
-            $WindowName = md5($url);
-            $tpl_data['studylinks'][] = array(
-                                         'url'        => $url,
-                                         'label'      => $label,
-                                         'windowName' => $WindowName,
-                                        );
-        }
-
-        $study_title       = $config->getSetting('title');
-        $study_description = $config->getSetting('StudyDescription');
-        $tpl_data['study_title']       = $study_title;
-        $tpl_data['study_description'] = html_entity_decode($study_description);
-        try {
-            $tpl_data['study_logo'] = $config->getSetting('studylogo');
-        } catch(ConfigurationException $e) {
-            $tpl_data['study_logo'] = '';
-        }
-
-        $www = $config->getSetting('www');
-        $tpl_data['baseurl'] = $www['url'];
-        $tpl_data['page']    = 'login';
-
-        //Output template using Smarty
-        $smarty = new Smarty_neurodb;
-        $smarty->assign($tpl_data);
-        $smarty->display('public_layout.tpl');
-    }
-
-
     /**
      * Dumps the password expiry form
      *
@@ -120,46 +50,17 @@ class SinglePointLogin
      */
     function showPasswordExpiryScreen()
     {
-        // Set passwordExpired flag
-        $this->_passwordExpired = true;
-
-        $tpl_data['username'] = $_POST['username'];
-
-        // remove logout from request
-        parse_str($_SERVER['QUERY_STRING'], $params);
-        unset($params['logout']);
-
-        $config =& NDB_Config::singleton();
-
-        $tpl_data['page_title'] = $config->getSetting('title');
-        $tpl_data['css']        = $config->getSetting('css');
-        $study_title            = $config->getSetting('title');
-        $study_description      = $config->getSetting('StudyDescription');
-        try {
-            $study_logo = $config->getSetting('studylogo');
-        } catch(ConfigurationException $e) {
-            $study_logo = '';
-        }
-
-        $tpl_data['study_title']       = $study_title;
-        $tpl_data['study_description'] = $study_description;
-        $tpl_data['study_logo']        = $study_logo;
-        $tpl_data['page'] = 'password-expiry';
-
-        $tpl_data['action'] = $_SERVER['PHP_SELF']
-            .'?'
-            . http_build_query($params);
-
-        $tpl_data['error_message'] = $this->_lastError;
-
-        //Output template using Smarty
-        $smarty = new Smarty_neurodb;
-        $smarty->assign($tpl_data);
-        $smarty->display('public_layout.tpl');
-        return false;
+        // FIXME: This is a temporary hack until the password reset logic is
+        // refactored to be sane and keep a token that can be authenticated.
+        //
+        // We store the username requesting the the password reset on the
+        // PHP session superglobal so that the password expiry page can
+        // trust it.
+        $_SESSION['PasswordExpiredForUser'] = $_POST['username'];
+        header("HTTP/1.1 303 See Other");
+        header("Location: /login/password-expiry/");
+        exit(0);
     }
-
-
     /**
      * Checks whether anyone is currently logged in
      *
@@ -170,7 +71,6 @@ class SinglePointLogin
     {
         return $this->_isLoggedIn;
     }
-
     /**
      * Checks whether users password is expired
      *
@@ -181,8 +81,6 @@ class SinglePointLogin
     {
         return $this->_passwordExpired;
     }
-
-
     /**
      * Saves the new password if last was expired
      *
@@ -193,44 +91,38 @@ class SinglePointLogin
     {
         // get saved data to pre-populate form
         $user =& User::factory($_POST['username']);
-
         // get user's data
         $data = $user->getData();
-
         // check password strength
         if (!User::isPasswordStrong(
             $_POST['password'],
             array(
-             $_POST['confirm'],
-             $data['UserID'],
-             $data['Email'],
+                $_POST['confirm'] ?? '',
+                $data['UserID'],
+                $data['Email'],
             ),
             array(
-             '==',
-             '!=',
-             '!=',
+                '==',
+                '!=',
+                '!=',
             )
         )
         ) {
             $this->_lastError = 'The password is weak, or'
-               . ' the passwords do not match';
+                . ' the passwords do not match';
         }
-
         if (password_verify($_POST['password'], $data['Password_hash'])) {
             $this->_lastError = 'You cannot keep the same password';
         }
-
         // if errors
         if (!empty($this->_lastError)) {
             return false;
         }
-
         // Reset passwordExpired flag
         $this->_passwordExpired = false;
         $user->updatePassword($_POST['password']);
         return true;
     }
-
     /**
      * Attempt to authenticate a user's credentials by any supported means.
      *
@@ -240,7 +132,6 @@ class SinglePointLogin
     {
         // Reset passwordExpired flag
         $this->_passwordExpired = false;
-
         if (!function_exists('getallheaders')) {
             /**
              * In case unable to detect getallheaders function
@@ -277,26 +168,22 @@ class SinglePointLogin
         // doesn't involve database calls
         $headers    = getallheaders();
         $authHeader = isset($headers['Authorization'])
-                         ? $headers['Authorization']
-                         : '';
+            ? $headers['Authorization']
+            : '';
         if (!empty($authHeader)) {
             $token = explode(" ", $authHeader);
             // Index 0 is "Bearer", 1 is the token
             if ($this->JWTAuthenticate($token[1]) === true) {
                 return true;
             }
-
         }
-
         // Now try password validation
-
         // This wasn't a login form, so don't waste any time
         if (empty($_POST['login'])) {
             return false;
         }
         return $this->passwordAuthenticate($_POST['username'], $_POST['password']);
     }
-
     /**
      * Attempts to authenticate a JWT token
      *
@@ -309,23 +196,19 @@ class SinglePointLogin
     {
         $factory = NDB_Factory::singleton();
         $config  = $factory->config();
-
         $sharedKey = $config->getSetting("JWTKey");
-
         //$jwt = \Firebase\JWT\JWT::encode($token, $sharedKey);
         try {
             $decoded = \Firebase\JWT\JWT::decode($token, $sharedKey, array("HS256"));
         } catch(Exception $e) {
             return false;
         }
-
         $decodedArray    = (array) $decoded;
         $this->_username
             = isset($decodedArray['user'])
-                ? $decodedArray['user'] : 'Unknown';
+            ? $decodedArray['user'] : 'Unknown';
         return isset($decodedArray['user']);
     }
-
     /**
      * Checks whether a given username and password are valid
      *
@@ -344,38 +227,23 @@ class SinglePointLogin
     function passwordAuthenticate($username, $password, $redirect = true)
     {
         $this->_lastError = '';
-
-         ///////////////////////////
-         ///initialization/////
-         //////////////////////////
+        ///////////////////////////
+        ///initialization/////
+        //////////////////////////
         $this->_username = isset($username) ? $username : 'Unknown';
-
         $setArray = array(
-                     'userID'          => $this->_username,
-                     'Success'         => 'Y',
-                     'Failcode'        => null,
-                     'Login_timestamp' => date('Y-m-d H:i:s'),
-                     'IP_address'      => isset($_SERVER['REMOTE_ADDR'])
-                                              ? $_SERVER['REMOTE_ADDR']
-                                              : 'Unknown',
-                     'Page_requested'  => isset($_SERVER['REQUEST_URI'])
-                                              ? $_SERVER['REQUEST_URI']
-                                              : 'Unknown',
-                    );
-        // save the new password if the last password expired
-        if (isset($_POST['expiry'])) {
-            $success = $this->save();
-
-            if ($success == false) {
-                if ($redirect) {
-                    $this->showPasswordExpiryScreen();
-                }
-                return false;
-            }
-        }
-
+            'userID'          => $this->_username,
+            'Success'         => 'Y',
+            'Failcode'        => null,
+            'Login_timestamp' => date('Y-m-d H:i:s'),
+            'IP_address'      => isset($_SERVER['REMOTE_ADDR'])
+                ? $_SERVER['REMOTE_ADDR']
+                : 'Unknown',
+            'Page_requested'  => isset($_SERVER['REQUEST_URI'])
+                ? $_SERVER['REQUEST_URI']
+                : 'Unknown',
+        );
         // don't waste execution time if no form was submitted
-
         if (empty($username)) {
             $this->_lastError = 'Please enter a username';
             $this->insertFailedDetail(
@@ -384,7 +252,6 @@ class SinglePointLogin
             );
             return false;
         }
-
         if (empty($password)) {
             $this->_lastError = 'Please enter a password';
             $this->insertFailedDetail(
@@ -393,15 +260,13 @@ class SinglePointLogin
             );
             return false;
         }
-
         // create DB object
         $factory = NDB_Factory::singleton();
         $DB      = $factory->database();
-
         // check users table to see if we have a valid user
         $query = "SELECT COUNT(*) AS User_count,
                         UserID,
-                        Password_expiry,
+                        Password_expiry < NOW() as Expired,
                         Active,
                         Pending_approval,
                         Password_hash
@@ -409,8 +274,7 @@ class SinglePointLogin
                   WHERE UserID = :username
                   GROUP BY UserID";
         $row   = $DB->pselectRow($query, array('username' => $username));
-
-        if ($row['User_count'] == 1) {
+        if (($row['User_count'] ?? 0) == 1) {
             // validate passsword
             $oldhash = $row['Password_hash'];
             if (password_verify($password, $oldhash)) {
@@ -418,7 +282,6 @@ class SinglePointLogin
                     $user =& User::factory($username);
                     $user->updatePassword($password);
                 }
-
                 if ($row['Active'] == 'N'
                     || $this->disabledDueToInactivity($username, 365)
                 ) {
@@ -429,10 +292,8 @@ class SinglePointLogin
                         "user account not active",
                         $setArray
                     );
-
                     return false;
                 }
-
                 if ($row['Pending_approval'] == 'Y') {
                     $this->_lastError = "Your account has not yet been activated."
                         . " Please contact your project administrator to activate"
@@ -440,30 +301,26 @@ class SinglePointLogin
                     $this->insertFailedDetail("user account pending", $setArray);
                     return false;
                 }
-
-                // check if the password expired
-                if (strcmp($row['Password_expiry'], date('Y-m-d', time())) < 1) {
-                    // show password expiry screen
-                    if ($redirect) {
-                        $this->showPasswordExpiryScreen();
+                // save the new password if the last password expired
+                if ($row['Expired']) {
+                    $success = $this->save();
+                    if ($success == false) {
+                        if ($redirect) {
+                            $this->showPasswordExpiryScreen();
+                        }
+                        return false;
                     }
-                    $this->_lastError = "Password expired";
-                    return false;
                 }
-
                 // user is valid
                 $this->_username = $row['UserID'];
-
-                $result =  $DB->insert('user_login_history', $setArray);
+                $DB->insert('user_login_history', $setArray);
                 return true;
             }
         }
-
         // bad usename or password
         $this->_lastError = "Incorrect email or password";
         return false;
     }
-
     /**
      * Sets the session data (State object)
      *
@@ -474,15 +331,12 @@ class SinglePointLogin
     {
         // someone is logged in
         $this->_isLoggedIn = true;
-
         // create the session managed State object
         if (!isset($_SESSION['State'])) {
             $_SESSION['State'] =& State::singleton();
         }
-
         $_SESSION['State']->setUsername($this->_username);
     }
-
     /**
      * Clears the authentication related session data (State object)
      *
@@ -493,35 +347,29 @@ class SinglePointLogin
     {
         // someone is logged in
         $this->_isLoggedIn = false;
-
         // create the session managed State object
         if (!isset($_SESSION['State'])) {
             $_SESSION['State'] =& State::singleton();
         }
-
         $_SESSION['State']->setUsername(null);
     }
-
-     /**
+    /**
      * Inserts the login (or failed-login) detail into the user_login_history
      *
      * @param String $description description for the failed-login
      * @param Array  $setArray    contains data to be inserted
      *
      * @return null
-      */
+     */
     function insertFailedDetail($description, $setArray)
     {
         // create DB object
         $DB =& Database::singleton();
-
         $setArray['Success']     = 'N';
         $setArray['Fail_detail'] = $description;
-
         // in future, add mapping of error message to Failcode field enum
-        $result =  $DB->insert('user_login_history', $setArray);
+        $DB->insert('user_login_history', $setArray);
     }
-
     /**
      * Checks if a user has not logged in for a given amount of time
      * As a side-effect, if true, will also set user field 'active' to 'N'
@@ -538,12 +386,10 @@ class SinglePointLogin
         $query = "SELECT MAX(Login_timestamp) as Login_timestamp
                   FROM user_login_history 
                   WHERE UserID = :username";
-
         $row        = $DB->pselectRow($query, array('username' => $username));
         $last_login = new DateTime($row['Login_timestamp']);
         $time_now   = new DateTime("now");
         $interval   = $last_login->diff($time_now);
-
         if ($interval->days > $maximumDaysInactive) {
             $DB->update(
                 'users',
