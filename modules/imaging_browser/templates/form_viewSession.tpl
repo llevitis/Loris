@@ -34,6 +34,7 @@
 
                       "Caveat" : "{$files[file].Caveat}",
                       "SNR" : "{if $files[file].SNR}{$files[file].SNR}{/if}",
+                      "DeepQC" : "{if $files[file].DeepQC}{$files[file].DeepQC}{/if}",
                       'HeaderInfo' : {
                           'XStep' : "{$files[file].Xstep}",
                           'YStep' : "{$files[file].Ystep}",

@@ -264,6 +264,10 @@ class ViewSession extends \NDB_Form
             $QCDate      = $FileObj->getParameter('QCLastChangeTime');
             $Caveat      = $FileObj->getParameter('Caveat');
             $SNR         = $FileObj->getParameter('SNR');
+            $DeepQC      = $FileObj->getParameter('DeepQC');
+            if ($DeepQC !== null) {
+                $DeepQC = number_format($DeepQC, 3, '.', '');
+            }
             $SeriesUID   = $FileObj->getParameter('SeriesUID');
             $XMLreport   = $FileObj->getParameter('processing:DTIPrepXmlReport');
             $XMLprotocol = $FileObj->getParameter('ProtocolFile');
@@ -312,6 +316,7 @@ class ViewSession extends \NDB_Form
                      'QCDate'                => $QCDate,
                      'Caveat'                => $Caveat,
                      'SNR'                   => $SNR,
+                     'DeepQC'                => $DeepQC,
                      'SeriesUID'             => $SeriesUID,
                      'XMLreport'             => $XMLreport,
                      'XMLprotocol'           => $XMLprotocol,

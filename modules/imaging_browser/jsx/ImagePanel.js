@@ -1,6 +1,6 @@
 /* exported ImagePanelHeader, ImagePanelHeadersTable, ImageQCDropdown, ImageQCStatic,
  ImagePanelQCStatusSelector, ImagePanelQCSelectedSelector, ImagePanelQCCaveatSelector,
- ImagePanelQCSNRValue, ImagePanelQCPanel, DownloadButton, ImageQCCommentsButton.
+ ImagePanelQCSNRValue, ImagePanelDeepQCValue, ImagePanelQCPanel, DownloadButton, ImageQCCommentsButton.
  LongitudinalViewButton, ImageDownloadButtons, ImagePanelBody, RImagePanel
 * */
 
@@ -341,6 +341,18 @@ var ImagePanelQCSNRValue = React.createClass({
         );
   }
 });
+var ImagePanelDeepQCValue = React.createClass({
+    render: function() {
+        return (
+            <ImageQCStatic
+                Label="DeepQC"
+                FormName="deep_qc"
+                FileID={this.props.FileID}
+                defaultValue={this.props.DeepQC}
+            />
+        );
+    }
+});
 var ImagePanelQCPanel = React.createClass({
   mixins: [React.addons.PureRenderMixin],
   render: function() {
@@ -366,6 +378,10 @@ var ImagePanelQCPanel = React.createClass({
                 <ImagePanelQCSNRValue
                     FileID={this.props.FileID}
                     SNR={this.props.SNR}
+                />
+                <ImagePanelDeepQCValue
+                    FileID={this.props.FileID}
+                    DeepQC={this.props.DeepQC}
                 />
             </div>
         );
@@ -506,6 +522,7 @@ var ImagePanelBody = React.createClass({
                                 Caveat={this.props.Caveat}
                                 Selected={this.props.Selected}
                                 SNR={this.props.SNR}
+                                DeepQC={this.props.DeepQC}
                                 SeriesUID={this.props.SeriesUID}
                             />
                          </div>
@@ -573,6 +590,7 @@ var ImagePanel = React.createClass({
                         Caveat={this.props.Caveat}
                         Selected={this.props.Selected}
                         SNR={this.props.SNR}
+                        DeepQC={this.props.DeepQC}
 
                         Fullname={this.props.Fullname}
                         XMLProtocol={this.props.XMLProtocol}
@@ -596,6 +614,7 @@ window.ImagePanelQCStatusSelector = ImagePanelQCStatusSelector;
 window.ImagePanelQCSelectedSelector = ImagePanelQCSelectedSelector;
 window.ImagePanelQCCaveatSelector = ImagePanelQCCaveatSelector;
 window.ImagePanelQCSNRValue = ImagePanelQCSNRValue;
+window.ImagePanelDeepQCValue = ImagePanelDeepQCValue;
 window.ImagePanelQCPanel = ImagePanelQCPanel;
 window.DownloadButton = DownloadButton;
 window.ImageQCCommentsButton = ImageQCCommentsButton;
@@ -613,6 +632,7 @@ export default {
   ImagePanelQCSelectedSelector,
   ImagePanelQCCaveatSelector,
   ImagePanelQCSNRValue,
+  ImagePanelDeepQCValue,
   ImagePanelQCPanel,
   DownloadButton,
   ImageQCCommentsButton,
